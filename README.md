@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Agentic QA Hub
 
 A local-first AI-assisted QA workbench with three specialized agents:
@@ -99,3 +100,7 @@ git push -u origin main
 ```bash
 pytest
 ```
+=======
+# Agentic-QA-Hub
+Agentic QA Hub – AI-powered QA agents and skills built on 25+ years of software quality assurance experience.
+>>>>>>> 6e455386de841b2069d4a98a8897a3c422c48cb8
