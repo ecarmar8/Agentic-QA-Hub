@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentic QA Hub</title><link rel="stylesheet" href="/static/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">Q</div><div><b>Agentic QA Hub</b><small>AI quality workspace</small></div></div>
+  <div class="nav-label">WORKSPACE</div>
+  <button class="nav active" data-view="overview">▦ <span>Overview</span></button>
+  <button class="nav" data-view="design">✳ <span>AI Test Designer</span></button>
+  <button class="nav" data-view="triage">⌕ <span>Failure Analyzer</span></button>
+  <button class="nav" data-view="evidence">▤ <span>Evidence & Reports</span></button>
+  <button class="nav" data-view="reviews">✓ <span>Review Queue</span></button>
+  <button class="nav" data-view="audit">◷ <span>Audit Log</span></button>
+  <div class="sidebar-bottom"><span class="dot"></span> Local workspace <small>Human-in-the-loop enabled</small></div>
+</aside>
+<main class="main">
+<header class="topbar"><div><span class="crumb">Workspace</span><span class="slash">/</span><b id="pageTitle">Overview</b></div><div class="top-right"><span class="pill">● Demo environment</span><div class="avatar">QA</div></div></header>
+<section class="content">
+<div class="view active" id="overview">
+  <div class="page-heading"><div><p class="eyebrow">QUALITY INTELLIGENCE</p><h1>QA Command Center</h1><p class="muted">Orchestrate test design, failure triage and evidence generation.</p></div><button class="primary" onclick="showView('design')">＋ New test design</button></div>
+  <div class="metric-grid">
+    <div class="metric"><div class="metric-top"><span>Total agent runs</span><span class="metric-icon purple">✳</span></div><strong id="mRuns">0</strong><small>Across all QA agents</small></div>
+    <div class="metric"><div class="metric-top"><span>Pending reviews</span><span class="metric-icon amber">◷</span></div><strong id="mPending">0</strong><small>Awaiting human approval</small></div>
+    <div class="metric"><div class="metric-top"><span>Approved items</span><span class="metric-icon green">✓</span></div><strong id="mApproved">0</strong><small>Human-reviewed outputs</small></div>
+    <div class="metric"><div class="metric-top"><span>Failed executions</span><span class="metric-icon red">!</span></div><strong id="mFailed">0</strong><small>From submitted evidence data</small></div>
+  </div>
+  <div class="grid-two">
+    <div class="panel"><div class="panel-head"><div><h3>Agent activity</h3><p>Runs by specialized QA agent</p></div><span class="subtle-tag">Live workspace</span></div><canvas id="agentChart" height="190"></canvas></div>
+    <div class="panel"><div class="panel-head"><div><h3>Human review status</h3><p>Approval workflow distribution</p></div></div><div class="donut-wrap"><canvas id="reviewChart"></canvas><div class="donut-center"><b id="reviewTotal">0</b><small>items</small></div></div><div class="legend"><span><i class="lg green"></i>Approved</span><span><i class="lg amber"></i>Pending</span><span><i class="lg red"></i>Rejected</span></div></div>
+  </div>
+  <div class="panel"><div class="panel-head"><div><h3>Recent agent runs</h3><p>Latest activity across your QA workflows</p></div><button class="text-btn" onclick="showView('audit')">View audit log →</button></div><div id="recentRuns" class="table-wrap"></div></div>
+  <div class="notice"><b>Human-in-the-loop:</b> AI outputs are drafts. Review and approve test cases, failure hypotheses and evidence before relying on them.</div>
+</div>
+
+<div class="view" id="design">
+ <div class="page-heading"><div><p class="eyebrow">AGENT 01 · TEST DESIGN</p><h1>AI Test Designer</h1><p class="muted">Turn requirements into structured, reviewable test scenarios.</p></div><span class="agent-status">● Agent ready</span></div>
+ <div class="work-grid"><div class="panel form-panel"><h3>Requirement input</h3><label>Story / feature title</label><input id="storyTitle" placeholder="e.g. Customer payment transfer">
+ <label>User story and business rules</label><textarea id="story" rows="7" placeholder="As a customer, I want to transfer funds between accounts so that..."></textarea>
+ <label>Acceptance criteria <small>One criterion per line</small></label><textarea id="criteria" rows="4" placeholder="Given a valid account...&#10;When the transfer is submitted...&#10;Then the transaction is recorded..."></textarea>
+ <label>Additional context <small>Optional</small></label><textarea id="context" rows="2" placeholder="Roles, integrations, limits, platform..."></textarea>
+ <button class="primary full" onclick="runDesign()">✳ Generate test scenarios</button></div><div class="panel side-help"><div class="agent-big purple">✳</div><h3>What this agent does</h3><ul><li>Analyzes story and acceptance criteria</li><li>Identifies risks and coverage gaps</li><li>Drafts positive, negative and boundary tests</li><li>Creates human review items</li></ul><div class="mini-note">Outputs are drafts. Validate business rules and expected results with the product owner.</div></div></div>
+ <div id="designOutput" class="output"></div>
+</div>
+
+<div class="view" id="triage">
+ <div class="page-heading"><div><p class="eyebrow">AGENT 02 · FAILURE TRIAGE</p><h1>Failure Analyzer</h1><p class="muted">Investigate test failures and prioritize diagnostic hypotheses.</p></div><span class="agent-status">● Agent ready</span></div>
+ <div class="work-grid"><div class="panel form-panel"><h3>Failure details</h3><label>Failure / test title</label><input id="failureTitle" placeholder="e.g. Payment API returns 504">
+ <label>Test log / error output</label><textarea id="log" rows="9" placeholder="Paste stack trace, API response, test runner output or error log..."></textarea>
+ <div class="two-input"><div><label>Expected result</label><textarea id="expected" rows="3" placeholder="Expected behavior"></textarea></div><div><label>Actual result</label><textarea id="actual" rows="3" placeholder="Observed behavior"></textarea></div></div>
+ <button class="primary full" onclick="runTriage()">⌕ Analyze failure</button></div><div class="panel side-help"><div class="agent-big green">⌕</div><h3>Diagnostic capabilities</h3><ul><li>Classifies likely failure domain</li><li>Highlights clues found in logs</li><li>Suggests root-cause hypotheses</li><li>Recommends next diagnostic checks</li></ul><div class="mini-note">A suggested root cause is a hypothesis, not a confirmed diagnosis.</div></div></div>
+ <div id="triageOutput" class="output"></div>
+</div>
+
+<div class="view" id="evidence">
+ <div class="page-heading"><div><p class="eyebrow">AGENT 03 · TEST EVIDENCE</p><h1>Evidence & Reports</h1><p class="muted">Consolidate execution facts into a reviewable QA summary.</p></div><span class="agent-status">● Agent ready</span></div>
+ <div class="work-grid"><div class="panel form-panel"><h3>Evidence input</h3><label>Report title</label><input id="eTitle" placeholder="e.g. Sprint 24 regression test">
+ <label>Requirement / scope</label><textarea id="requirement" rows="3" placeholder="Describe what was validated..."></textarea>
+ <label>Test cases (JSON array)</label><textarea id="testCases" rows="4" placeholder='[{"id":"TC-01","name":"Valid payment","expected":"Payment succeeds"}]'></textarea>
+ <label>Execution results (JSON array)</label><textarea id="results" rows="5" placeholder='[{"id":"TC-01","status":"passed","evidence":"response-200.png"},{"id":"TC-02","status":"failed","evidence":"error.log"}]'></textarea>
+ <label>Notes</label><textarea id="eNotes" rows="2" placeholder="Build, environment, limitations..."></textarea>
+ <button class="primary full" onclick="runEvidence()">▤ Generate evidence summary</button></div><div class="panel side-help"><div class="agent-big purple">▤</div><h3>Report contents</h3><ul><li>Execution metrics and pass rate</li><li>Scope and test inventory</li><li>Observations and missing evidence</li><li>HTML, PDF and Excel exports</li></ul><div class="mini-note">Only supplied results are counted. The agent never claims tests ran when no results were supplied.</div></div></div>
+ <div id="evidenceOutput" class="output"></div>
+ <div class="panel export-panel"><div><h3>Export workspace reports</h3><p class="muted">Download current review queue and agent run history.</p></div><div class="export-actions"><a class="secondary" href="/api/reports/html" target="_blank">Open HTML</a><a class="secondary" href="/api/reports/pdf">Download PDF</a><a class="secondary" href="/api/reports/xlsx">Download Excel</a></div></div>
+</div>
+
+<div class="view" id="reviews">
+ <div class="page-heading"><div><p class="eyebrow">GOVERNANCE</p><h1>Human Review Queue</h1><p class="muted">Approve, reject or return AI-generated drafts for revision.</p></div><span class="pill">Human approval required</span></div>
+ <div class="panel"><div class="panel-head"><div><h3>Items awaiting review</h3><p>Every decision is recorded in the audit log.</p></div><button class="secondary" onclick="loadReviews()">↻ Refresh</button></div><div id="reviewsList"></div></div>
+</div>
+
+<div class="view" id="audit">
+ <div class="page-heading"><div><p class="eyebrow">GOVERNANCE</p><h1>Audit Log</h1><p class="muted">Trace agent runs and human review actions.</p></div><button class="secondary" onclick="loadAudit()">↻ Refresh</button></div>
+ <div class="panel"><div id="auditList" class="table-wrap"></div></div>
+</div>
+</section>
+<footer>Agentic QA Hub <span>·</span> Local-first demonstrator <span>·</span> AI outputs require human validation</footer>
+</main></div>
+<div id="toast" class="toast"></div>
+<script src="/static/app.js"></script>
+</body></html>
